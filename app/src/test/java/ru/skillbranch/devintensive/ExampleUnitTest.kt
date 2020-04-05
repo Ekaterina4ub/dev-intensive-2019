@@ -60,11 +60,11 @@ class ExampleUnitTest {
     fun test_abstract_factory() {
         val user = User.makeUser("Ekaterina Chub")
         val txtMessage = BaseMessage.makeMessage(user,
-            Chat("0"), payload = "Any text message", type = "text")
+            Chat("0"), Date(100), payload = "Any text message", type = "text")
         val imgMessage = BaseMessage.makeMessage(user,
             Chat("0"), payload = "Any image message", type = "image")
 
-        assertEquals("id:0 Ekaterina отправил сообщение \"Any text message\" только что", txtMessage.formatMessage())
+        assertEquals("id:0 Ekaterina отправил сообщение \"Any text message\" более года назад", txtMessage.formatMessage())
         assertEquals("id:1 Ekaterina отправил изображение \"Any image message\" только что", imgMessage.formatMessage())
 
     }
@@ -86,6 +86,29 @@ class ExampleUnitTest {
         assertEquals("через 7 дней", Date().add(7, TimeUnits.DAY).humanizeDiff())
         assertEquals("более года назад", Date().add(-400, TimeUnits.DAY).humanizeDiff())
         assertEquals("более чем через год", Date().add(400, TimeUnits.DAY).humanizeDiff())
+
+    }
+
+    @Test
+    fun test_listenAnswer_ok() {
+        val benderObj = Bender(Bender.Status.NORMAL, Bender.Question.NAME)
+        assertEquals(benderObj.listenAnswer("bender").first, "Отлично - ты справился\nНазови мою профессию?")
+
+        val benderObj2 = Bender(Bender.Status.NORMAL, Bender.Question.SERIAL)
+        assertEquals(benderObj2.listenAnswer("2716057").first, "Отлично - ты справился\nНа этом все, вопросов больше нет")
+
+    }
+
+    @Test
+    fun test_listenAnswer_wrong_answers() {
+        val benderObj = Bender(Bender.Status.NORMAL, Bender.Question.NAME)
+        assertEquals(benderObj.listenAnswer("Fry").first, "Это неправильный ответ\nКак меня зовут?")
+
+        val benderObj2 = Bender(Bender.Status.NORMAL, Bender.Question.SERIAL)
+        assertEquals(benderObj2.listenAnswer("0000000").first, "Это неправильный ответ\nМой серийный номер?")
+
+        val benderObj3 = Bender(Bender.Status.DANGER, Bender.Question.SERIAL)
+        assertEquals(benderObj3.listenAnswer("0000000").first, "Это неправильный ответ. Давай все по новой\nМой серийный номер?")
 
     }
 
