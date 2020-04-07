@@ -1,5 +1,7 @@
 package ru.skillbranch.devintensive.models
 
+import java.io.Serializable
+
 class Bender (var status: Status = Status.NORMAL, var question: Question = Question.NAME ) {
 
     fun askQuestion () : String = when(question) {
@@ -17,11 +19,13 @@ class Bender (var status: Status = Status.NORMAL, var question: Question = Quest
             question = question.nextQuestion()
             "Отлично - ты справился\n${question.question}" to status.color
         } else {
-            status = status.nextStatus()
-            if(status == Status.CRITICAL) {
-                "Это неправильный ответ. Давай все по новой\n${question.question}" to status.color
-            } else {
+            if(status != Status.CRITICAL) {
+                status = status.nextStatus()
                 "Это неправильный ответ\n${question.question}" to status.color
+            } else {
+                question = Question.NAME
+                status = Status.NORMAL
+                "Это неправильный ответ. Давай все по новой\n${question.question}" to status.color
             }
         }
     }

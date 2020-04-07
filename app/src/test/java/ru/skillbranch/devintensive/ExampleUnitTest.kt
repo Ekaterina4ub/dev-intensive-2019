@@ -92,23 +92,31 @@ class ExampleUnitTest {
     @Test
     fun test_listenAnswer_ok() {
         val benderObj = Bender(Bender.Status.NORMAL, Bender.Question.NAME)
-        assertEquals(benderObj.listenAnswer("bender").first, "Отлично - ты справился\nНазови мою профессию?")
+        assertEquals("Отлично - ты справился\nНазови мою профессию?", benderObj.listenAnswer("bender").first)
 
         val benderObj2 = Bender(Bender.Status.NORMAL, Bender.Question.SERIAL)
-        assertEquals(benderObj2.listenAnswer("2716057").first, "Отлично - ты справился\nНа этом все, вопросов больше нет")
+        val (message2, color2) = benderObj2.listenAnswer("2716057")
+        assertEquals("Отлично - ты справился\nНа этом все, вопросов больше нет", message2)
+        assertEquals("(255, 255, 255)", color2.toString())
 
     }
 
     @Test
     fun test_listenAnswer_wrong_answers() {
         val benderObj = Bender(Bender.Status.NORMAL, Bender.Question.NAME)
-        assertEquals(benderObj.listenAnswer("Fry").first, "Это неправильный ответ\nКак меня зовут?")
+        val (message, color) = benderObj.listenAnswer("Fry")
+        assertEquals("Это неправильный ответ\nКак меня зовут?", message)
+        assertEquals("(255, 120, 0)", color.toString())
 
         val benderObj2 = Bender(Bender.Status.NORMAL, Bender.Question.SERIAL)
-        assertEquals(benderObj2.listenAnswer("0000000").first, "Это неправильный ответ\nМой серийный номер?")
+        val (message2, color2) = benderObj2.listenAnswer("0000000")
+        assertEquals("Это неправильный ответ\nМой серийный номер?", message2)
+        assertEquals("(255, 120, 0)", color2.toString())
 
-        val benderObj3 = Bender(Bender.Status.DANGER, Bender.Question.SERIAL)
-        assertEquals(benderObj3.listenAnswer("0000000").first, "Это неправильный ответ. Давай все по новой\nМой серийный номер?")
+        val benderObj3 = Bender(Bender.Status.CRITICAL, Bender.Question.SERIAL)
+        val (message3, color3) = benderObj3.listenAnswer("0000000")
+        assertEquals("Это неправильный ответ. Давай все по новой\nКак меня зовут?", message3)
+        assertEquals("(255, 255, 255)", color3.toString())
 
     }
 
